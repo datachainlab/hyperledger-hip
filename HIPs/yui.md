@@ -15,7 +15,7 @@ Hyperledger YUI
 * Shinichi Yamashita, NTT DATA - Shinichi.Yamashita@jp.nttdata.com
 
 # Abstract
-The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous ledgers both enterprise permissioned and public blockchains.
+The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains both enterprise permissioned and public blockchains.
 
 # Context
 *Review of Hyperledger Labs (WIP)*
@@ -31,7 +31,7 @@ The Hyperledger YUI is an interoperability project to achieve trustless applicat
 
 As the commercialization of products and solutions based on blockchains progresses, there is a growing need for interoperability solutions to connect multiple blockchain systems.
 
-A straightforward way to bring interoperability would be to exchange data via a certain authority or a trusted third party (TTP). Traditional API between blockchain systems fall into this category in terms of trusting the endpoint provider of API. On the other hand, there are issues with TTP, thus solutions that do not rely on a TTP are needed.
+A straightforward way to bring interoperability would be to exchange data via a certain authority or a trusted third party (TTP). Traditional API between blockchain systems fall into this category in terms of trusting the endpoint provider of API. On the other hand, there are issues with this method, thus solutions that do not rely on a TTP are needed.
 
 One of the issues is that the TTP (in the API example, a provider or an administrator of API endpoint) must be trusted by all participants, which requires cost for trust, and sometimes impractical assumption to maintain, especially in a network with frequent change in participants.
 
@@ -59,8 +59,9 @@ Based on the above motivation, we propose the Hyperledger YUI, which aims to sat
     * Introducing such components may decrease the level of security of a system as it would be bounded by the lowest component in the system.
     * Also, introducing new (off-chain) components with high fault tolerance will also lead to increased operational costs
 5. Do not introduce a new layer (such as integration layer)
-    * Each actor (of ledgers) has only to interact with a respective ledger of its interest to complete a cross-chain operation unless the application has additional requirements. 
-    * In order to achieve interoperability that satisfies design principles above, YUI focuses on inter-blockchain communication protocol (IBC) designed as a core component of the Cosmos network and applies it to the enterprise blockchain domain to achieve communication between blockchains.
+    * Each actor (of blockchains) has only to interact with a respective blockchain of its interest to complete a cross-chain operation unless the application has additional requirements. 
+
+In order to achieve interoperability that satisfies design principles above, YUI focuses on inter-blockchain communication protocol (IBC) designed as a core component of the Cosmos network and applies it to the enterprise blockchain domain to achieve communication between blockchains.
 
 IBC enables communication among heterogeneous blockchain with TAO property, namely, (reliable) transport, authentication, and ordering. 
 
@@ -78,15 +79,17 @@ Fig1: Architecture with IBC modules
 
 The on-chain light client is a basis for IBC/TAO, which verifies that presented states actually exist on an opposite blockchain without relying on any trusted third parties. On top of that, connection abstraction and channel abstract are defined and used to connect two smart contracts on two blockchains and to relay packets between them.
 
-IBC requires Commitment Proof which can be verified by the on-chain light client to check if a certain state (a key value pair) exists (or does not exist) in the target blockchain. For this reason, the specification of commitment proof for each blockchain should be defined.
+Cosmos network defines the standard of these modules (called ICS, Inter-Chain Standard). Hyperledger YUI designed and implemented these modules in enterprise domain, currently supporting Hyperledger Fabric, Besu, and Corda.
 
-For example in YUI, YUI-Fabric-IBC is a collection of modules for Hyperledger Fabric. We designed and implemented Endorsed Commitment, a design for commitment proof for Hyperledger Fabric.
+For example, IBC requires Commitment Proof which can be verified by the on-chain light client to check if a certain state (a key value pair) exists (or does not exist) in the target blockchain. For this reason, the specification of commitment proof for each blockchain should be defined.
+
+In YUI-Fabric-IBC, which is a collection of modules for Hyperledger Fabric, we designed and implemented Endorsed Commitment, a design for commitment proof for Hyperledger Fabric.
 
 In Hyperledger Fabric, basically state updates and corresponding blocks are signed by endorser(s) to be accepted. 
 
 Thus in YUI-Fabric-IBC, read/write set of a certain key/value pair signed by the appropriate endorser(s) can formulate a proof of the state (called an Endorsed Commitment). The on-chain light client can verify these signatures provided endorsement policy of target blockchain.
 
-We can develop several cross-chain applications on top of YUI, examples are:
+On top of YUI, developers can implement several cross-chain applications, examples are:
 * Cross-chain token transfer
 * Cross-chain Atomic swap
   * Example includes delivery versus payment settlement
@@ -104,7 +107,85 @@ Refer to yui-docs repository
 (WIP)
 
 # FAQs
+## What is the Hyperledger YUI?
+The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains.
 
+## How is Hyperledger YUI different from Hyperledger Cactus?
+1. As stated in design principles above, YUI only rely on on-chain governance for safety (or trust) in cross chain operations
+   * Each actor of ledgers has to interact with only a respective ledger of its interest to complete a cross-chain operation; i.e., Developers for cross chain operations should only care about on-chain modules for both ledger (to communicate)
+
+* However, Cactus introduce Cactus layer (with Cactus Node Server) to provide unified access for interoperability. This is also the reason that Cactus is sometimes introduced as “integration framework” not “interoperability solution"
+* This results a significant difference on module composition. Most of the YUI modules are on-chain contract while Cactus has several off-chain modules (including Cactus Node Server)
+
+2. YUI is a project based on Inter Blockchain Communication protocol and it defines a standard data model and an unified communication method independent from a specific DLT
+* However, in Cactus, it lets developers for each project to design and implement communication and messaging protocol for reliable communication between blockchains
+
+## What DLT Platforms are currently supported?
+* Hyperledger Fabric
+* Hyperledger Besu
+* Corda Open Source
+* Corda Enterprise
+
+## How does Hyperledger YUI meet the incubation entry considerations?
+### Codebase
+* _Code should exist as open source software in some form. Previous accepted projects have come up through labs (e.g., Cactus, Ursa); while others previously had stand alone governance prior to joining (e.g., Besu)._
+  
+  **Hyperledger YUI has been in Hyperledger Labs since June, 2021**
+
+* _DCO sign off should exists in the code repository. If not 100% ready, the code must be capable of becoming compliant upon entry (i.e., squash commit)._
+
+  **Hyperledger YUI has required DCO signoffs since entry into the Labs**
+
+### Maintainers
+* _The project should have multiple maintainers. These maintainers need not be from different companies; however, having maintainers from different companies is seen as a positive sign. Proposals with only one maintainer have been rejected by prior TSCs._
+
+  **There are multiple maintainers in Hyperledger YUI. Below is the list of maintainers:**
+
+  * Jun Kimura - https://github.com/bluele
+  * Ryo Sato - https://github.com/3100
+  * Masanori Yoshida - https://github.com/siburu
+  
+* _The project should have demonstrable examples of POC/production uses publicly available._
+
+  **Hyperledger YUI is being used for multiple engagements.**
+
+* _The project should have the backing of more than one organization/individuals (i.e., the project proposers should be able to demonstrate significant, long term contribution in codebase)._
+
+  **YUI received grant from two different organizations for development and improvement. There are several issues raised from multiple organizations as well.**
+
+### Community
+* _The TSC is more likely to accept projects that have contributors familiar with open source practices. Participating in existing projects or starting in Hyperledger Labs is a great place to grow this experience._
+
+  **As mentioned previously, Hyperledger YUI has been operating in an open source model since being brought into Hyperledger Labs in Juns 2021. Hyperledger YUI also had presentations within Hyperledger Community, one in Hyperledger Global Forum and another in Hyperledger Tokyo Meetup.**
+
+### Sponsors
+* _Sponsors are advocates for the project. There should be more than one sponsor, and they should be from different organizations. They may or may not be committing resources to the project._
+
+  **Multiple sponsors exist for the project as listed at the top of this document, including sponsors who are contributing and using Hyperledger YUI.**
+
+### Legal
+* _Trademark concerns – project names should not be trademarked by a contributing company or if it is, then the trademark will need to be handed over to Hyperledger. Project names must be approved by the Hyperledger marketing committee_
+* _Projects do not require a name prior to being submitted._
+
+  **We prefer to call the project Hyperledger YUI. But if there's a concern, we would like the Hyperledger marketing committee to propose a name for the project.**
+
+* _Codebase should be Apache 2 licensable, without encumbrances_
+    * _Non-Apache 2 licensed code is possible, but requires Governing board approval (Section 12 subsection d of the Hyperledger Charter)_
+    * _Special examination should be given to copyleft and non-licensed code._
+    * _Required patent licensing issues have prevented projects from entering Incubation._
+    * _GPL licensing issues have prevented projects from entering Incubation._
+
+  **The source code is Apache 2 licensed.**
+
+* _If code does not already have copyright, the code should be modified to include copyright as per Copyright and License Policy prior to being brought into Hyperledger._
+
+  **The team is working on adding the copyright information to the files.**
+
+### Overlap with Existing Projects
+* _The TSC has mentioned that they are not interested in bringing in additional distributed ledger projects. There should be a distinct advantage for a new distributed ledger project. This will be similar for other types of projects. In general, if a project is similar to an existing project, there should be a distinct advantage that the project brings over and beyond the existing project and that this cannot be contributed directly to the existing project._
+* _New projects should bring something to the table that current projects do not._
+
+  **See previous FAQ "How is Hyperledger YUI different from Hyperledger Cactus?"**
 
 # Closure
 The goal of YUI is to realize interoperability and applications with cross-chain functionalities in the enterprise domain. The success of the project can be measured by the number of projects that are built on top of it.
