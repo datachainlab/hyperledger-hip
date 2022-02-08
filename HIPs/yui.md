@@ -18,7 +18,6 @@ Hyperledger YUI
 The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains both enterprise permissioned and public blockchains.
 
 # Context
-*Review of Hyperledger Labs (WIP)*
 Since the beginning of 2020, the team behind YUI has been working on interoperability problem, as it became obvious there will be many heterogeneous blockchain networks in a near future.
 
 The vision of YUI for blockchain networks is summarized in two key concepts. That is;
@@ -112,6 +111,7 @@ On top of YUI, developers can implement several cross-chain applications, exampl
 
 # How To
 (WIP)
+
 Refer to yui-docs repository
 
 # References
