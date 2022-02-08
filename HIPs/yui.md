@@ -19,6 +19,17 @@ The Hyperledger YUI is an interoperability project to achieve trustless applicat
 
 # Context
 *Review of Hyperledger Labs (WIP)*
+Since the beginning of 2020, the team behind YUI has been working on interoperability problem, as it became obvious there will be many heterogeneous blockchain networks in a near future.
+
+The vision of YUI for blockchain networks is summarized in two key concepts. That is;
+- Enable general computation between networks (not just token transfer)
+- Keep it as decentralized as possible, i.e., Do not introduce additional trust in the network
+
+To fulfill the above concepts, the team focused on Inter Blockchain Communication protocol (IBC) designed and implemented as the core functionalities of Cosmos network. Though the original IBC aimed to make network of public blockchains, the team applied the technology for enterprise and consortium blockchains.
+
+The team put together modules for major enterprise blockchain, namely Hyperledger Fabric, Besu, and Corda and contributed to Hyperledger as a Lab called YUI in June 2021.
+
+After the lab is set up, YUI has been actively engaging with open source communities including presentation in Hyperledger Global Forum and meetup. Discussions within forum on GitHub resulted in grant opportunities from Interchain Foundation as well as collaboration with public blockchain projects like Harmony and Celo (ChorusOne). Also enterprises like NTT Data are applying YUI for projects for proof of concepts planned for commercial use.
 
 # Dependent Projects
 *(WIP)*
