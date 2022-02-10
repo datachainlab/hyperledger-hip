@@ -12,6 +12,7 @@ Hyperledger YUI
 * Ryo Sato, Datachain, Inc. https://github.com/3100
 * Masanori Yoshida, Datachain, Inc. - https://github.com/siburu
 * Jeffrey Hu, director of research, Bianjie AI - https://github.com/HuLaTown
+* Yelong Zhang, tech-director, Bianjie AI (https://github.com/zhangyelong)
 * Shinichi Yamashita, NTT DATA - Shinichi.Yamashita@jp.nttdata.com
 
 # Abstract
