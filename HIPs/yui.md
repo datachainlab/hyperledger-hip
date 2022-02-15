@@ -9,40 +9,43 @@ Hyperledger YUI
 
 # Sponsor(s)
 * Jun Kimura, CTO, Datachain, Inc. - https://github.com/bluele
-* Ryo Sato, Datachain, Inc. https://github.com/3100
+* Ryo Sato, Datachain, Inc. - https://github.com/3100
 * Masanori Yoshida, Datachain, Inc. - https://github.com/siburu
 * Jeffrey Hu, director of research, Bianjie AI - https://github.com/HuLaTown
-* Yelong Zhang, tech-director, Bianjie AI (https://github.com/zhangyelong)
+* Yelong Zhang, tech-director, Bianjie AI - https://github.com/zhangyelong
 * Shinichi Yamashita, NTT DATA - Shinichi.Yamashita@jp.nttdata.com
 
 # Abstract
 The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains both enterprise permissioned and public blockchains.
 
 # Context
-Since the beginning of 2020, the team behind YUI has been working on interoperability problem, as it became obvious there will be many heterogeneous blockchain networks in a near future.
+Since 2020, the team behind YUI has been working on interoperability problem, as it became obvious there will be many heterogeneous blockchain networks in a near future.
 
-The vision of YUI for blockchain networks is summarized in two key concepts. That is;
+The vision of YUI for blockchain networks is summarized in two key concepts:
 - Enable general computation between networks (not just token transfer)
 - Keep it as decentralized as possible, i.e., Do not introduce additional trust in the network
 
-To fulfill the above concepts, the team focused on Inter Blockchain Communication protocol (IBC) designed and implemented as the core functionalities of Cosmos network. Though the original IBC aimed to make network of public blockchains, the team applied the technology for enterprise and consortium blockchains.
+To fulfill the above concepts, the team focused on Inter Blockchain Communication protocol (IBC) designed and implemented as the core functionalities of Cosmos network. Though the original IBC aimed to make networks of public blockchains, the team applied the technology mainly for enterprise and consortium blockchains.
 
 The team put together modules for major enterprise blockchain, namely Hyperledger Fabric, Besu, and Corda and contributed to Hyperledger as a Lab called YUI in June 2021.
 
 After the lab is set up, YUI has been actively engaging with open source communities including presentation in Hyperledger Global Forum and meetup. Discussions within forum on GitHub resulted in grant opportunities from Interchain Foundation as well as collaboration with public blockchain projects like Harmony and Celo (ChorusOne). Also enterprises like NTT Data are applying YUI for projects for proof of concepts planned for commercial use.
 
 # Dependent Projects
-*(WIP)*
-- IBC from Cosmos
-- Hyperledger Fabric
-- Hyperledger Besu
+The design and specification of communication protocol used in YUI is derived from **Inter Blockchain Communication Protocol (IBC)** by Cosmos foundation.
+
+Specifically, ICS(Interchain Standards) specifies desired properties and interfaces of modules consisting IBC. Communication modules for YUI are designed and implemented to be compliant with IBC Core and Relayer.
+
+Also, YUI is dependent on the releases made by other DLT platforms. YUI currently supports:
+* **Hyperledger Fabric**
+* **Hyperledger Besu**
+* **Corda Open Source**
+* **Corda Enterprise**
 
 # Motivation
-*(WIP:Key sentences)*
-
 As the commercialization of products and solutions based on blockchains progresses, there is a growing need for interoperability solutions to connect multiple blockchain systems.
 
-A straightforward way to bring interoperability would be to exchange data via a certain authority or a trusted third party (TTP). Traditional API between blockchain systems fall into this category in terms of trusting the endpoint provider of API. On the other hand, there are issues with this method, thus solutions that do not rely on a TTP are needed.
+A straightforward way to bring interoperability would be to exchange data via a certain authority or a trusted third party (TTP). Traditional API between blockchain systems falls into this category in terms of trusting the endpoint provider of API. On the other hand, there are issues with this method, thus solutions that do not rely on a TTP are needed.
 
 One of the issues is that the TTP (in the API example, a provider or an administrator of API endpoint) must be trusted by all participants, which requires cost for trust, and sometimes impractical assumption to maintain, especially in a network with frequent change in participants.
 
@@ -55,9 +58,8 @@ There exist similar solutions to the TTP, that is to connect multiple blockchain
 Proposal
 
 # Solution
-*(WIP:Key sentences)*
+Based on the above motivation, we propose the Hyperledger YUI, which aims to satisfy the following properties and this also structures design principles.
 
-Based on the above motivation, we propose the Hyperledger YUI, which aims to satisfy the following properties. (This also structures design principles)
 1. Provide a unified communication method independent from a specific blockchain/DLT implementation
     * This enables application developers to develop chain-agnostic application logics.
 2. Support arbitrary data transfer and computation
@@ -74,9 +76,9 @@ Based on the above motivation, we propose the Hyperledger YUI, which aims to sat
 
 In order to achieve interoperability that satisfies design principles above, YUI focuses on inter-blockchain communication protocol (IBC) designed as a core component of the Cosmos network and applies it to the enterprise blockchain domain to achieve communication between blockchains.
 
-IBC enables communication among heterogeneous blockchain with TAO property, namely, (reliable) transport, authentication, and ordering. 
+IBC enables communication among heterogeneous blockchain with TAO property, namely, reliable transport, authentication, and ordering. 
 
-* “Reliable” means that only a packet that is exactly sent by a source chain is received by a destination chain exactly once. In fact, blockchains themselves never communicate with other blockchains. Thus a “relayer” needs to relay packets from one to another, but the role of relayer is permissionless; that is, anyone can run relayers.
+* “Reliable” means that only a packet that is exactly sent by a source chain is received by a destination chain exactly once. In fact, blockchains themselves never communicate with other blockchains. Thus a “relayer” needs to relay packets from one to another, but the role of relayer is permissionless; that is, anyone can run relayers. (Because of on-chain verification nature of IBC)
 * “Authenticated” means that IBC uses “channel” abstraction described later when relaying packets and that each end of a channel is exclusively assigned to a specific smart contract. Thus, if a packet is received by a destination chain via a channel, it proves that a specific smart contract assigned to the channel on a source chain sent the packet and that any other smart contracts can never use the channel to send packets.
 * “Ordered” means that a destination chain receives packets in the same order in which a source chain sends the packets.
 
@@ -88,9 +90,9 @@ Modules for IBC communication are implemented as smart contracts that operate on
 Fig1: Architecture with IBC modules
 ![architecture](images/yui/yui_IBC_architecture.svg)
 
-The on-chain light client is a basis for IBC/TAO, which verifies that presented states actually exist on an opposite blockchain without relying on any trusted third parties. On top of that, connection abstraction and channel abstract are defined and used to connect two smart contracts on two blockchains and to relay packets between them.
+The on-chain light client is a basis for IBC/TAO, which verifies that presented states actually exist on an opposite blockchain without relying on any trusted third parties. It maintains state (ClientState) for verification such as public keys of validators and last verified headers depending on the protocol. On top of that, connection abstraction and channel abstract are defined and used to connect two smart contracts on two blockchains and to relay packets between them.
 
-Cosmos network defines the standard of these modules (called ICS, Inter-Chain Standard). Hyperledger YUI designed and implemented these modules in enterprise domain, currently supporting Hyperledger Fabric, Besu, and Corda.
+Cosmos network defines the standard of these modules. Hyperledger YUI designed and implemented these modules in enterprise domain, currently supporting Hyperledger Fabric, Besu, and Corda.
 
 For example, IBC requires Commitment Proof which can be verified by the on-chain light client to check if a certain state (a key value pair) exists (or does not exist) in the target blockchain. For this reason, the specification of commitment proof for each blockchain should be defined.
 
@@ -100,7 +102,9 @@ In Hyperledger Fabric, basically state updates and corresponding blocks are sign
 
 Thus in YUI-Fabric-IBC, read/write set of a certain key/value pair signed by the appropriate endorser(s) can formulate a proof of the state (called an Endorsed Commitment). The on-chain light client can verify these signatures provided endorsement policy of target blockchain.
 
-On top of YUI, developers can implement several cross-chain applications, examples are:
+For the case of Besu, a merkle root for the world state is included in the header, thus this can be used for commitment proof. For the header verification, you can refer to [docs](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/main/docs/ibft2-light-client.md) for details.
+
+On top of YUI, developers can implement several cross-chain applications using trustless communication, examples are:
 * Cross-chain token transfer
 * Cross-chain Atomic swap
   * Example includes delivery versus payment settlement
@@ -108,15 +112,20 @@ On top of YUI, developers can implement several cross-chain applications, exampl
 
 
 # Effort and Resources
-(WIP)
+The YUI code base is used with multiple large enterprises for proof of concepts These includes Hitachi, NTT Data, and Soramitsu, who are also large Hyperledger contributors. As a result, Datachain is fully committed to suport for YUI with currently 6 engineers working full time on the code base.
+
+Also, YUI has been awarded for the grant by Interchain Foundation and there are collaborative project with Chorus One and Harmony for interoperability with EVM-based blockchains.
 
 # How To
-(WIP)
+Detailed architecture and implementation guide can be found in:
+- For Hyperledger Fabric: https://github.com/hyperledger-labs/yui-fabric-ibc
+- For Hyperledger Besu: https://github.com/hyperledger-labs/yui-ibc-solidity
+- For Corda: https://github.com/hyperledger-labs/yui-corda-ibc
 
-Refer to yui-docs repository
+In addition, there is a [tutorial](https://labs.hyperledger.org/yui-docs/yui-ibc-solidity/) for Hyperledger Besu and Ethereum for token transfer.
 
 # References
-(WIP)
+*(WIP)*
 
 # FAQs
 ## What is the Hyperledger YUI?
