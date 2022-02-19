@@ -58,7 +58,7 @@ There exist similar solutions to the TTP, that is to connect multiple blockchain
 Proposal
 
 # Solution
-Based on the above motivation, we propose the Hyperledger YUI, which aims to satisfy the following properties and this also structures design principles.
+Based on the above motivation, we propose the Hyperledger YUI, which aims to satisfy the following properties. Also, these correspond to the design principles.
 
 1. Provide a unified communication method independent from a specific blockchain/DLT implementation
     * This enables application developers to develop chain-agnostic application logics.
@@ -66,7 +66,7 @@ Based on the above motivation, we propose the Hyperledger YUI, which aims to sat
     * Developers can design and implement the specific protocol for its cross-chain application, not limited to token transfer use cases.
 3. Cross-authentication
     * By relying on the on-chain verification of the other chain’s state, cross-chain communication can be achieved without any safety concern due to the behavior of off-chain actors
-    * This allows cross-chain message relaying not only to the trusted and privileged actors, but also to any actor that satisfies the ACL of the permissioned chain.
+    * This allows cross-chain message to be relayed not only to the trusted and privileged actors, but also to any actor that satisfies the ACL of the permissioned chain.
     * In addition, we aim to apply the method not only to the permissioned chains, but to the public chains as well.
 4. Avoid adding components that introduce additional trust (apart from individual blockchains)
     * Introducing such components may decrease the level of security of a system as it would be bounded by the lowest component in the system.
@@ -78,9 +78,9 @@ In order to achieve interoperability that satisfies design principles above, YUI
 
 IBC enables communication among heterogeneous blockchain with TAO property, namely, reliable transport, authentication, and ordering. 
 
-* “Reliable” means that only a packet that is exactly sent by a source chain is received by a destination chain exactly once. In fact, blockchains themselves never communicate with other blockchains. Thus a “relayer” needs to relay packets from one to another, but the role of relayer is permissionless; that is, anyone can run relayers. (Because of on-chain verification nature of IBC)
+* “Reliable” means that only a packet that is sent by a source chain is received by a destination chain exactly once. In fact, blockchains themselves never communicate with other blockchains. Thus a “relayer” needs to relay packets from one to another, but the role of relayer is permissionless; that is, anyone can run relayers. (Because of on-chain verification nature of IBC)
 * “Authenticated” means that IBC uses “channel” abstraction described later when relaying packets and that each end of a channel is exclusively assigned to a specific smart contract. Thus, if a packet is received by a destination chain via a channel, it proves that a specific smart contract assigned to the channel on a source chain sent the packet and that any other smart contracts can never use the channel to send packets.
-* “Ordered” means that a destination chain receives packets in the same order in which a source chain sends the packets.
+* “Ordered” means that a destination chain is able to receive packets in the same order in which a source chain sends the packets.
 
 Modules for IBC communication are implemented as smart contracts that operate on both blockchains and consist of the following components:
 * On-chain light client
@@ -90,7 +90,7 @@ Modules for IBC communication are implemented as smart contracts that operate on
 Fig1: Architecture with IBC modules
 ![architecture](images/yui/yui_IBC_architecture.svg)
 
-The on-chain light client is a basis for IBC/TAO, which verifies that presented states actually exist on an opposite blockchain without relying on any trusted third parties. It maintains state (ClientState) for verification such as public keys of validators and last verified headers depending on the protocol. On top of that, connection abstraction and channel abstract are defined and used to connect two smart contracts on two blockchains and to relay packets between them.
+The on-chain light client is a basis for IBC/TAO, which verifies that presented states actually exist on an opposite blockchain as an on-chain smart contract. The way it verifies the blockchain depends on the specification of each light client and it can be designed without the need for any trusted third parties. A light client maintains the state (ClientState) for verification such as public keys of validators and last verified headers depending on the protocol. On top of that, connection abstraction and channel abstract are defined and used to connect two smart contracts on two blockchains and to relay packets between them.
 
 Cosmos network defines the standard of these modules. Hyperledger YUI designed and implemented these modules in enterprise domain, currently supporting Hyperledger Fabric, Besu, and Corda.
 
@@ -112,7 +112,7 @@ On top of YUI, developers can implement several cross-chain applications using t
 
 
 # Effort and Resources
-The YUI code base is used with multiple large enterprises for proof of concepts These includes Hitachi, NTT Data, and Soramitsu, who are also large Hyperledger contributors. As a result, Datachain is fully committed to suport for YUI with currently 6 engineers working full time on the code base.
+The YUI code base is used with multiple large enterprises for proof of concepts. These includes Hitachi, NTT Data, and Soramitsu, who are also large Hyperledger contributors as well as JCB. As a result, Datachain is fully committed to suport for YUI with currently 6 engineers working full time on the code base.
 
 Also, YUI has been awarded for the grant by Interchain Foundation and there are collaborative project with Chorus One and Harmony for interoperability with EVM-based blockchains.
 
@@ -132,7 +132,7 @@ In addition, there is a [tutorial](https://labs.hyperledger.org/yui-docs/yui-ibc
 The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains.
 
 ## How is Hyperledger YUI different from Hyperledger Cactus?
-1. As stated in design principles above, YUI only rely on on-chain governance for safety (or trust) in cross chain operations
+1. As stated in the design principles above, YUI only relies on on-chain governance for safety (or trust) in cross chain operations
    * Each actor of ledgers has to interact with only a respective ledger of its interest to complete a cross-chain operation; i.e., Developers for cross chain operations should only care about on-chain modules for both ledger (to communicate)
 
 * However, Cactus introduce Cactus layer (with Cactus Node Server) to provide unified access for interoperability. This is also the reason that Cactus is sometimes introduced as “integration framework” not “interoperability solution"
