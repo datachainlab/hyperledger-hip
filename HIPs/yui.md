@@ -16,7 +16,7 @@ Hyperledger YUI
 * Shinichi Yamashita, NTT DATA - Shinichi.Yamashita@jp.nttdata.com
 
 # Abstract
-The Hyperledger YUI is an interoperability project to achieve trustless application-agnostic exchange of information for heterogeneous blockchains both enterprise permissioned and public blockchains.
+The Hyperledger YUI is an interoperability project focusing on communication and verification protocol to achieve trustless application-agnostic exchange of information for heterogeneous blockchains both enterprise permissioned and public blockchains.
 
 # Context
 Since 2020, the team behind YUI has been working on interoperability problem, as it became obvious there will be many heterogeneous blockchain networks in a near future.
@@ -27,6 +27,8 @@ The vision of YUI for blockchain networks is summarized in two key concepts:
 
 To fulfill the above concepts, the team focused on Inter Blockchain Communication protocol (IBC) designed and implemented as the core functionalities of Cosmos network. Though the original IBC aimed to make networks of public blockchains, the team applied the technology mainly for enterprise and consortium blockchains.
 
+For making IBC works in Hyperledger families, the team focused in designing and formalizing the verification protocols suitable to each ledger, thus abstracting the verification layer and enabling the upper layer to use its functionality without caring about the underlying ledgers.
+
 The team put together modules for major enterprise blockchain, namely Hyperledger Fabric, Besu, and Corda and contributed to Hyperledger as a Lab called YUI in June 2021.
 
 After the lab is set up, YUI has been actively engaging with open source communities including presentation in Hyperledger Global Forum and meetup. Discussions within forum on GitHub resulted in grant opportunities from Interchain Foundation as well as collaboration with public blockchain projects like Harmony and Celo (ChorusOne). Also enterprises like NTT Data are applying YUI for projects for proof of concepts planned for commercial use.
@@ -34,7 +36,7 @@ After the lab is set up, YUI has been actively engaging with open source communi
 # Dependent Projects
 The design and specification of communication protocol used in YUI is derived from **Inter Blockchain Communication Protocol (IBC)** by Cosmos foundation.
 
-Specifically, ICS(Interchain Standards) specifies desired properties and interfaces of modules consisting IBC. Communication modules for YUI are designed and implemented to be compliant with IBC Core and Relayer.
+Specifically, ICS(Interchain Standards) specifies desired properties and interfaces of modules consisting IBC. Communication and verification modules for YUI are designed and implemented to be compliant with IBC Core and Relayer.
 
 Also, YUI is dependent on the releases made by other DLT platforms. YUI currently supports:
 * **Hyperledger Fabric**
@@ -53,6 +55,7 @@ In addition, the complexity of the entire system is increased because it require
 
 There exist similar solutions to the TTP, that is to connect multiple blockchains to a single system. (This is sometimes referred to as an “integrated” solution.) However, such a system has the challenges of TTP and the cost of requiring developers to understand and operate multiple layers (“integrated” and “individual” layers).
 
+A key to achieving the reliable communication between ledgers is to provide proof and verification mechanism for each ledger and none of the previous Hyperledger project addresses practical implementation for this purpose.
 
 # Status
 Proposal
@@ -101,6 +104,7 @@ In YUI-Fabric-IBC, which is a collection of modules for Hyperledger Fabric, we d
 In Hyperledger Fabric, basically state updates and corresponding blocks are signed by endorser(s) to be accepted. 
 
 Thus in YUI-Fabric-IBC, read/write set of a certain key/value pair signed by the appropriate endorser(s) can formulate a proof of the state (called an Endorsed Commitment). The on-chain light client can verify these signatures provided endorsement policy of target blockchain.
+Details of design and implementation for YUI-Fabric-IBC can be found [here](https://github.com/datachainlab/public-docs/tree/master/fabric-ibc)
 
 For the case of Besu, a merkle root for the world state is included in the header, thus this can be used for commitment proof. For the header verification, you can refer to [docs](https://github.com/hyperledger-labs/yui-ibc-solidity/blob/main/docs/ibft2-light-client.md) for details.
 
@@ -138,8 +142,8 @@ The Hyperledger YUI is an interoperability project to achieve trustless applicat
 * However, Cactus introduce Cactus layer (with Cactus Node Server) to provide unified access for interoperability. This is also the reason that Cactus is sometimes introduced as “integration framework” not “interoperability solution"
 * This results a significant difference on module composition. Most of the YUI modules are on-chain contract while Cactus has several off-chain modules (including Cactus Node Server)
 
-2. YUI is a project based on Inter Blockchain Communication protocol and it defines a standard data model and an unified communication method independent from a specific DLT
-* However, in Cactus, it lets developers for each project to design and implement communication and messaging protocol for reliable communication between blockchains
+2. YUI is a project focusing on the communication and verification protocol to achieve interoperability on the upper layer of YUI, whereas details of design and implementation for verification is open in Cactus (i.e., In Cactus, it lets developers for each plugin to design and implement for verification mechanism). As such, YUI can be used by Cactus to achieve integration.
+* Also, YUI is based on Inter Blockchain Communication protocol and it defines a standard data model and an unified communication method independent from a specific DLT.
 
 ## What DLT Platforms are currently supported?
 * Hyperledger Fabric
